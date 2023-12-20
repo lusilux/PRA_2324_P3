@@ -16,9 +16,9 @@ class BSTree {
         //Busqueda
 
         BSNode<T>* search(BSNode<T>* n, T e) const{
-            if(n == nullptr)throw runtime_error("");
-            else if(n.elem < e) return search(n.right, e);
-            else if(n.elem > e) return search(n.left, e);
+            if(n == nullptr)throw runtime_error("Element not found!");
+            else if(n->elem < e) return search(n->right, e);
+            else if(n->elem > e) return search(n->left, e);
             else return n;
         } 
 
@@ -26,34 +26,34 @@ class BSTree {
 
         BSNode<T>* insert(BSNode<T>* n, T e){
             if(n == nullptr) return new BSNode(e);
-            else if(n.elem == e)throw runtime_error("");
-            else if(n.elem < e) n.right = insert(n.right, e);
-            else n.left = insert(n.left, e);
+            else if(n->elem == e)throw runtime_error("Duplicated element!");
+            else if(n->elem < e) n->right = insert(n->right, e);
+            else n->left = insert(n->left, e);
             return n;
         } 
 
         //Recorrido
 
-        void print_inorder(std::ostream &out, BSNode<T> n) const{
+        void print_inorder(std::ostream &out, BSNode<T>* n) const{
             if(n != nullptr){
-                print_inorder(n.left, out);
-                out << n << " ";
-                print_inorder(n.right, out);
+                print_inorder(out, n->left);
+                out << n->elem << " ";
+                print_inorder(out, n->right);
             } 
         }
 
         //Eliminación
 
         BSNode<T>* remove(BSNode<T>* n, T e){
-            if(n == nullptr)throw runtime_error("");
-            else if(n.elem < e)n.right = remove(n.right,e);
-            else if(n.elem > e)n.left = remove(n.left, e);
+            if(n == nullptr)throw runtime_error("Element not found!");
+            else if(n->elem < e)n->right = remove(n->right,e);
+            else if(n->elem > e)n->left = remove(n->left, e);
             else{
-                if(n.left != nullptr && n.right != nullptr){
-                    n.elem = max(n.left);
-                    n.left = remove_max(n.left);
+                if(n->left != nullptr && n->right != nullptr){
+                    n->elem = max(n->left);
+                    n->left = remove_max(n->left);
                 } else{
-                    n = (n.left != nullptr) ? n.left : n.right;
+                    n = (n->left != nullptr) ? n->left : n->right;
                 } 
             } 
             return n;
@@ -61,14 +61,14 @@ class BSTree {
 
         T max(BSNode<T>* n) const{
             if(n == nullptr)throw runtime_error("");
-            else if(n.right != nullptr)return max(n.right);
-            else return n.elem;
+            else if(n->right != nullptr)return max(n->right);
+            else return n->elem;
         } 
 
         BSNode<T>* remove_max(BSNode<T>* n){
-            if(n.right == nullptr) return n.left;
+            if(n->right == nullptr) return n->left;
             else{
-                n.right = remove_max(n.right);
+                n->right = remove_max(n->right);
                 return n;
             }  
         }
@@ -76,8 +76,8 @@ class BSTree {
         //Destruccion
         void delete_cascade(BSNode<T>* n) {
             if(n == nullptr)return;
-            delete_cascade(n.left);
-            delete_cascade(n.right);
+            delete_cascade(n->left);
+            delete_cascade(n->right);
             delete n;
         } 
 
@@ -94,7 +94,7 @@ class BSTree {
         //Busqueda
 
         T search(T e) const{
-            return search(root, e).elem;
+            return search(root, e)->elem;
         }
 
         T operator[](T e) const{
@@ -105,12 +105,13 @@ class BSTree {
 
         void insert(T e){
             root = insert(root, e);
+            nelem++;
         } 
 
         //Recorrido
 
-        friend std::ostream& operator<<(std::ostream &out, const BSTree<T> &bst){
-            out << print_inorder(out, bst.root);
+        friend std::ostream& operator<<(std::ostream &out, BSTree<T> &bst){
+            bst.print_inorder(out, bst.root);
             return out;
         } 
 
@@ -118,6 +119,7 @@ class BSTree {
 
         void remove(T e){
             remove(root, e);
+            nelem--;
         }  
 
         //Destruccion
