@@ -7,8 +7,6 @@
 #include "BSTree.h"
 #include "TableEntry.h"
 
-using namespace std;
-
 template <typename V>
 class BSTreeDict: public Dict<V> {
 
@@ -16,7 +14,6 @@ class BSTreeDict: public Dict<V> {
         BSTree<TableEntry<V>>* tree;
 
     public:
-
         BSTreeDict(){
             tree = new BSTree<TableEntry<V>>;
         } 
@@ -25,8 +22,24 @@ class BSTreeDict: public Dict<V> {
             delete tree;
         } 
 
-        friend std::ostream& operator<<(std::ostream &out, const BSTreeDict<V> &bs){
-            out << bs.tree;
+        void insert(string key, V value) override { 
+            TableEntry<V> *t = new TableEntry<V>(key, value);
+            tree->insert(*t);
+            delete t;
+        } 
+
+		V search(string key) override { return (tree->search(key)).value; } 
+
+		V remove(string key) override {
+            V val = (tree->search(key)).value;
+            tree->remove(key); // return (tree->remove(key)).value
+            return val;
+        } 
+
+		int entries() override { return tree->size();} 
+
+        friend std::ostream& operator<<(std::ostream &out, const BSTreeDict<V> &bs) {
+            out << *bs.tree;
             return out;
         } 
 
@@ -34,25 +47,6 @@ class BSTreeDict: public Dict<V> {
             return search(key);
         } 
 
-        //Metodos Dict.h
-
-        void insert(string key, V value) override{
-            tree->insert(key);
-        } 
-		
-        V search(string key) override{
-            return tree->search(key);
-        } 
-		
-        V remove(string key) override{
-            V value = tree->search(key);
-            tree->remove(key);
-            return value;
-        } 
-
-		int entries() override{
-            return tree.nelem;
-        }
         
 };
 
